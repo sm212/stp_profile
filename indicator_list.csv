@@ -1,88 +1,88 @@
-﻿id,geog,name,theme
-359,ccg,"% reporting cancer in the last 5 years",cancer
-93261,msoa,Additional risk of death in people with diabetes,diabetes
-93246,ccg,Additional risk of heart failure among people with diabetes,chd
-93245,ccg,Additional risk of myocardial infarction among people with diabetes,chd
-93247,ccg,Additional risk of stroke among people with diabetes,diabetes
-93140,ccg,Admissions for diabetes for children and young people aged under 19 years,diabetes
-92587,msoa,AF006: stroke risk assessed w. CHA2DS2-VASc (den.incl.exc.),chd
-92594,ccg,AF007: treated w anti-coag. therapy (CHADS2DS2-VASc >=2) (den.incl.exc.),chd
-93307,ccg,Alzheimer's disease: Direct standardised rate of inpatient admissions (aged 65 years and over) - CCG responsibility,dementia
-280,ccg,Atrial fibrillation: QOF prevalence,chd
-92867,msoa,Births to mothers aged 40+: % of live births,maternity
-91244,ccg,CAN003: review within 6 mths of diagnosis,cancer
-90834,district,Cancer diagnosed at early stage (experimental statistics),cancer
-91720,district,Cancer screening coverage - bowel cancer,cancer
-22001,district,Cancer screening coverage - breast cancer,cancer
-22002,district,Cancer screening coverage - cervical cancer,cancer
-276,ccg,Cancer: QOF prevalence (all ages),cancer
-90988,ccg,CHD admissions (all ages),chd
-273,district,CHD: QOF prevalence (all ages),chd
-91085,ccg,CHD002: Last BP reading in last 12mths is <=150/90 (den.incl.exc.),chd
-91059,ccg,"Coronary heart disease mortality rates, under 75 years",chd
-92589,msoa,CVD-PP: QOF prevalence (30-74),chd
-93253,district,"Deaths from all cancer, all ages, standardised mortality ratio",cancer
-93254,district,"Deaths from all cancer, under 75 years, standardised mortality ratio",cancer
-93257,district,"Deaths from coronary heart disease, all ages, standardised mortality ratio",chd
-93259,district,"Deaths from stroke, all ages, standardised mortality ratio",stroke
-91215,ccg,DEM004: Dementia care plan has been reviewed last 12mths (den.incl.exc.),dementia
-93305,msoa,Dementia: Direct standardised rate of emergency admissions (aged 65 years and over) - CCG responsibility,dementia
-93043,msoa,Dementia: Percentage of assessed residential care and nursing home beds (aged 65 years and over),dementia
-247,ccg,Dementia: QOF prevalence (all ages),dementia
-91891,ccg,Dementia: Recorded prevalence (aged 65 years and over),dementia
-241,ccg,Diabetes: QOF prevalence (17+),diabetes
-91884,ccg,Direct standardised rate of mortality: People with dementia (aged 65 years and over),dementia
-90696,ccg,DM002: Last BP is <=150/90 (den. incl. exc.),chd
-90697,ccg,DM003: Last BP is <=140/80 (den. incl. exc.),chd
-90701,ccg,DM004: Measured total cholesterol (last 12mths) <=5mmol/l(den.incl.exc.),chd
-90694,ccg,DM012: Patients with diabetes who had a foot examination and risk classification (den.incl.exc.),diabetes
-91238,msoa,DM014: Newly diagnosed patients w. diabetes referred to education programme within 9 mths (den.incl.exc.),diabetes
-93229,district,"Emergency hospital admissions for coronary heart disease, standardised admission ratio",chd
-93232,district,"Emergency hospital admissions for Myocardial Infarction (heart attack), standardised admission ratio",chd
-93231,district,"Emergency hospital admissions for stroke, standardised admission ratio",stroke
-92949,district,Estimated dementia diagnosis rate (aged 65 and over),dementia
-93347,district,Estimated diabetes diagnosis rate,diabetes
-91461,ccg,Estimated percentage of detected Atrial Fibrillation,chd
-91459,ccg,Estimated prevalence of atrial fibrillation,chd
-92952,ccg,Estimated prevalence of diabetes (undiagnosed and diagnosed),diabetes
-92663,district,Estimated prevalence of stroke (55-79 yrs),stroke
-92660,district,Estimated prevalence of undiagnosed hypertension (16+),chd
-90987,ccg,Heart failure admissions (all ages),chd
-262,ccg,Heart Failure: QOF prevalence (all ages),chd
-91089,ccg,HYP006: Blood pressure <= 150/90 mmHg in people with hypertension,chd
-219,district,Hypertension: QOF prevalence (all ages),chd
-93235,district,"Incidence of breast cancer, standardised incidence ratio",cancer
-93236,district,"Incidence of colorectal cancer, standardised incidence ratio",cancer
-93237,district,"Incidence of lung cancer, standardised incidence ratio",cancer
-93238,district,"Incidence of prostate cancer, standardised incidence ratio",cancer
-92323,district,Incidence rate of alcohol-related cancer,cancer
-93234,district,"Incidences of all cancers, standardised incidence ratio",cancer
-20101,district,Low birth weight of term babies,maternity
-1203,district,Mortality rate from lung cancer,cancer
-91355,ccg,"Number of emergency admissions with cancer (Number per 100,000 population)",cancer
-93105,district,"Obese children Reception Year, three year average",diabetes
-92874,ccg,"People with type 1 diabetes who achieved all three treatment targets
+﻿id,geog_id,name,theme
+359,152,"% reporting cancer in the last 5 years",cancer
+93261,3,Additional risk of death in people with diabetes,diabetes
+93246,152,Additional risk of heart failure among people with diabetes,chd
+93245,152,Additional risk of myocardial infarction among people with diabetes,chd
+93247,152,Additional risk of stroke among people with diabetes,diabetes
+93140,154,Admissions for diabetes for children and young people aged under 19 years,diabetes
+92587,3,AF006: stroke risk assessed w. CHA2DS2-VASc (den.incl.exc.),chd
+92594,152,AF007: treated w anti-coag. therapy (CHADS2DS2-VASc >=2) (den.incl.exc.),chd
+93307,154,Alzheimer's disease: Direct standardised rate of inpatient admissions (aged 65 years and over) - CCG responsibility,dementia
+280,152,Atrial fibrillation: QOF prevalence,chd
+92867,3,Births to mothers aged 40+: % of live births,maternity
+91244,152,CAN003: review within 6 mths of diagnosis,cancer
+90834,101,Cancer diagnosed at early stage (experimental statistics),cancer
+91720,101,Cancer screening coverage - bowel cancer,cancer
+22001,101,Cancer screening coverage - breast cancer,cancer
+22002,101,Cancer screening coverage - cervical cancer,cancer
+276,152,Cancer: QOF prevalence (all ages),cancer
+90988,152,CHD admissions (all ages),chd
+273,101,CHD: QOF prevalence (all ages),chd
+91085,152,CHD002: Last BP reading in last 12mths is <=150/90 (den.incl.exc.),chd
+91059,152,"Coronary heart disease mortality rates, under 75 years",chd
+92589,3,CVD-PP: QOF prevalence (30-74),chd
+93253,101,"Deaths from all cancer, all ages, standardised mortality ratio",cancer
+93254,101,"Deaths from all cancer, under 75 years, standardised mortality ratio",cancer
+93257,101,"Deaths from coronary heart disease, all ages, standardised mortality ratio",chd
+93259,101,"Deaths from stroke, all ages, standardised mortality ratio",stroke
+91215,152,DEM004: Dementia care plan has been reviewed last 12mths (den.incl.exc.),dementia
+93305,3,Dementia: Direct standardised rate of emergency admissions (aged 65 years and over) - CCG responsibility,dementia
+93043,3,Dementia: Percentage of assessed residential care and nursing home beds (aged 65 years and over),dementia
+247,152,Dementia: QOF prevalence (all ages),dementia
+91891,152,Dementia: Recorded prevalence (aged 65 years and over),dementia
+241,152,Diabetes: QOF prevalence (17+),diabetes
+91884,152,Direct standardised rate of mortality: People with dementia (aged 65 years and over),dementia
+90696,152,DM002: Last BP is <=150/90 (den. incl. exc.),chd
+90697,152,DM003: Last BP is <=140/80 (den. incl. exc.),chd
+90701,152,DM004: Measured total cholesterol (last 12mths) <=5mmol/l(den.incl.exc.),chd
+90694,152,DM012: Patients with diabetes who had a foot examination and risk classification (den.incl.exc.),diabetes
+91238,3,DM014: Newly diagnosed patients w. diabetes referred to education programme within 9 mths (den.incl.exc.),diabetes
+93229,101,"Emergency hospital admissions for coronary heart disease, standardised admission ratio",chd
+93232,101,"Emergency hospital admissions for Myocardial Infarction (heart attack), standardised admission ratio",chd
+93231,101,"Emergency hospital admissions for stroke, standardised admission ratio",stroke
+92949,101,Estimated dementia diagnosis rate (aged 65 and over),dementia
+93347,101,Estimated diabetes diagnosis rate,diabetes
+91461,152,Estimated percentage of detected Atrial Fibrillation,chd
+91459,152,Estimated prevalence of atrial fibrillation,chd
+92952,154,Estimated prevalence of diabetes (undiagnosed and diagnosed),diabetes
+92663,101,Estimated prevalence of stroke (55-79 yrs),stroke
+92660,101,Estimated prevalence of undiagnosed hypertension (16+),chd
+90987,152,Heart failure admissions (all ages),chd
+262,152,Heart Failure: QOF prevalence (all ages),chd
+91089,152,HYP006: Blood pressure <= 150/90 mmHg in people with hypertension,chd
+219,101,Hypertension: QOF prevalence (all ages),chd
+93235,101,"Incidence of breast cancer, standardised incidence ratio",cancer
+93236,101,"Incidence of colorectal cancer, standardised incidence ratio",cancer
+93237,101,"Incidence of lung cancer, standardised incidence ratio",cancer
+93238,101,"Incidence of prostate cancer, standardised incidence ratio",cancer
+92323,101,Incidence rate of alcohol-related cancer,cancer
+93234,101,"Incidences of all cancers, standardised incidence ratio",cancer
+20101,101,Low birth weight of term babies,maternity
+1203,101,Mortality rate from lung cancer,cancer
+91355,152,"Number of emergency admissions with cancer (Number per 100,000 population)",cancer
+93105,101,"Obese children Reception Year, three year average",diabetes
+92874,152,"People with type 1 diabetes who achieved all three treatment targets
 ",diabetes
-92872,ccg,People with type 1 diabetes who received all 8 care processes,diabetes
-92873,ccg,People with type 2 diabetes who received all 8 care processes,diabetes
-93497,district,Percentage of deaths with underlying cause Cancer,cancer
-92706,ccg,Post-neonatal mortality,maternity
-91743,district,Premature births (less than 37 weeks gestation),maternity
-92263,ccg,PTSD in perinatal period: Estimated number of women,maternity
-93327,ccg,Ratio of people with type 1 diabetes who received all 8 care processes,diabetes
-93328,ccg,Ratio of people with type 2 diabetes who received all 8 care processes,diabetes
-1202,district,Smoking attributable deaths from stroke,stroke
-93085,district,Smoking status at time of delivery,maternity
-91468,ccg,Stroke admissions (Sentinel Stroke National Audit Programme),stroke
-91462,msoa,Stroke admissions with history of atrial fibrillation not prescribed anticoagulation prior to stroke,stroke
-91106,ccg,"Stroke mortality rates, over 75 years (age standardised)",stroke
-91061,ccg,"Stroke mortality rates, under 75 years (age standardised)",stroke
-212,district,Stroke: QOF prevalence (all ages),stroke
-91845,ccg,Two-week referrals resulting in a diagnosis of cancer (Conversion rate: as % of all TWW referrals).,cancer
-91344,ccg,Two-week wait referrals (Indirectly age-sex standardised referral ratio),cancer
-91882,ccg,"Two-week wait referrals for suspected cancer (Number per 100,000 population)",cancer
-91458,district,"Under 18s births rate / 1,000",maternity
-20401,district,"Under 18s conception rate / 1,000",maternity
-91166,msoa,Under 75 mortality rate from heart disease,chd
-93309,ccg,Unspecified dementia: Direct standardised rate of inpatient admissions (aged 65 years and over) - CCG responsibility,dementia
-93308,msoa,Vascular dementia: Direct standardised rate of inpatient admissions (aged 65 years and over) - CCG responsibility,dementia
+92872,152,People with type 1 diabetes who received all 8 care processes,diabetes
+92873,152,People with type 2 diabetes who received all 8 care processes,diabetes
+93497,101,Percentage of deaths with underlying cause Cancer,cancer
+92706,154,Post-neonatal mortality,maternity
+91743,101,Premature births (less than 37 weeks gestation),maternity
+92263,154,PTSD in perinatal period: Estimated number of women,maternity
+93327,152,Ratio of people with type 1 diabetes who received all 8 care processes,diabetes
+93328,152,Ratio of people with type 2 diabetes who received all 8 care processes,diabetes
+1202,101,Smoking attributable deaths from stroke,stroke
+93085,101,Smoking status at time of delivery,maternity
+91468,152,Stroke admissions (Sentinel Stroke National Audit Programme),stroke
+91462,3,Stroke admissions with history of atrial fibrillation not prescribed anticoagulation prior to stroke,stroke
+91106,152,"Stroke mortality rates, over 75 years (age standardised)",stroke
+91061,152,"Stroke mortality rates, under 75 years (age standardised)",stroke
+212,101,Stroke: QOF prevalence (all ages),stroke
+91845,152,Two-week referrals resulting in a diagnosis of cancer (Conversion rate: as % of all TWW referrals).,cancer
+91344,154,Two-week wait referrals (Indirectly age-sex standardised referral ratio),cancer
+91882,152,"Two-week wait referrals for suspected cancer (Number per 100,000 population)",cancer
+91458,101,"Under 18s births rate / 1,000",maternity
+20401,101,"Under 18s conception rate / 1,000",maternity
+91166,3,Under 75 mortality rate from heart disease,chd
+93309,154,Unspecified dementia: Direct standardised rate of inpatient admissions (aged 65 years and over) - CCG responsibility,dementia
+93308,3,Vascular dementia: Direct standardised rate of inpatient admissions (aged 65 years and over) - CCG responsibility,dementia
