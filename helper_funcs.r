@@ -52,23 +52,20 @@ get_data = function(indicator_id, geog_type, out_path = './data/'){
 plot_bars = function(indicator_id, geog_type, data_path = './data/'){
   # Plots latest data as bar chart, with error bars
   
-  # Load data
+  # Load data & get latest filter criteria
   data_path = paste0(data_path, indicator_id, '_', geog_type, '.csv')
   df = read_csv(data_path, col_types = col_spec)
   
-  # Filter to latest data for geog_type
   geog_ids = geog_lookup[as.character(geog_type)][[1]]
   latest_time = tail(df$Timeperiod, 1)
   
-  plot_df = df %>%
+  bar_plot = df %>%
     filter(AreaCode %in% geog_ids &
-           Timeperiod == latest_time)
-  
-  # Plot
-  p = ggplot(plot_df, aes(x = AreaName, y = Value)) +
+           Timeperiod == latest_time) %>%
+    ggplot(plot_df, aes(x = AreaName, y = Value)) +
     geom_bar(position = 'dodge', stat = 'identity')
   
-  return(p)
+  return(bar_plot)
 }
 
 plot_bars(93307, 154)
