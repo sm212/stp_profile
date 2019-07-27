@@ -59,11 +59,20 @@ plot_bars = function(indicator_id, geog_type, data_path = './data/'){
   geog_ids = geog_lookup[as.character(geog_type)][[1]]
   latest_time = tail(df$Timeperiod, 1)
   
-  bar_plot = df %>%
-    filter(AreaCode %in% geog_ids &
-           Timeperiod == latest_time) %>%
-    ggplot(plot_df, aes(x = AreaName, y = Value)) +
-    geom_bar(position = 'dodge', stat = 'identity')
+  df_bar = df %>%
+    filter(AreaCode %in% geog_ids & Timeperiod == latest_time)
+  
+  df_comparator = df %>%
+    filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
+  
+  bar_plot =
+    ggplot(df_bar, aes(x = AreaName, y = Value)) +
+    geom_bar(position = 'dodge', stat = 'identity') +
+    geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
+                  width = 0.2) +
+    geom_hline(data = df_comparator, mapping = aes(yintercept = Value))
+  
+  
   
   return(bar_plot)
 }
