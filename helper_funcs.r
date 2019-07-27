@@ -1,7 +1,7 @@
 library(tidyverse)
 library(fingertipsR)
 
-
+# Specify which columns to read in from .csv's
 col_spec = cols(
   .default = col_skip(),
   IndicatorName = col_character(),
@@ -18,6 +18,7 @@ col_spec = cols(
   TimeperiodSortable = col_double()
 )
 
+# Lookup - Underlying Essex geographies for each health geography
 geog_lookup = list('101' = c('E06000033', 'E06000034', 'E07000066', 
                            'E07000067', 'E07000068', 'E07000069', 
                            'E07000070', 'E07000074', 'E07000075'),
@@ -49,55 +50,47 @@ get_data = function(indicator_id, geog_type, out_path = './data/'){
   }
 }
 
+load_data = function(indicator_id, geog_type, data_path = './data/'){
+  # Loads csv into a dataframe
+
+  data_path = paste0(data_path, indicator_id, '_', geog_type, '.csv')
+  df = read_csv(data_path, col_types = col_spec)  
+  
+  return(df)
+}
+
 plot_bars = function(indicator_id, geog_type, data_path = './data/'){
   # Plots latest data as bar chart, with error bars
   
-  # Load data & get latest filter criteria
-  data_path = paste0(data_path, indicator_id, '_', geog_type, '.csv')
-  df = read_csv(data_path, col_types = col_spec)
+  df = load_data(indicator_id, geog_type, data_path)
   
+  # Create plot dataframes & plot
   geog_ids = geog_lookup[as.character(geog_type)][[1]]
   latest_time = tail(df$Timeperiod, 1)
   
   df_bar = df %>%
     filter(AreaCode %in% geog_ids & Timeperiod == latest_time)
-  
   df_comparator = df %>%
     filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
   
-  bar_plot =
-    ggplot(df_bar, aes(x = AreaName, y = Value)) +
+  bar_plot = ggplot(df_bar, aes(x = AreaName, y = Value)) +
     geom_bar(position = 'dodge', stat = 'identity') +
     geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
                   width = 0.2) +
     geom_hline(data = df_comparator, mapping = aes(yintercept = Value))
   
-  
-  
   return(bar_plot)
 }
 
-plot_bars(93307, 154)
 
-
-plot_trend = function(indicator_id, geog_type){
+plot_trend = function(indicator_id, geog_type, data_path = './data/'){
   # Plots all data in df
-}
-
-
-plot_map = function(df, geog){
   
+  df = load_data(indicator_id, geog_type, data_path)
 }
 
 
-
-df = read_csv('./data/1203_101.csv', col_types = col_spec)
-
-
-
-
-
-
-
-
-
+plot_map = function(indicator_id, geog_type, data_path = './data/'){
+  
+  df = load_data(indicator_id, geog_type, data_path)
+}
