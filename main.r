@@ -3,7 +3,6 @@ library(fingertipsR)
 
 source('./helper_funcs.r')
 
-# Get all data
 indicator_list = read_csv('./indicator_list.csv')
 
 for (i in 1:nrow(indicator_list)){

@@ -2,6 +2,32 @@ library(tidyverse)
 library(fingertipsR)
 
 
+col_spec = cols(
+  .default = col_skip(),
+  IndicatorName = col_character(),
+  AreaCode = col_character(),
+  AreaName = col_character(),
+  Sex = col_character(),
+  Age = col_character(),
+  Value = col_double(),
+  LowerCI95.0limit = col_double(),
+  UpperCI95.0limit = col_double(),
+  Count = col_double(),
+  Denominator = col_double(),
+  Timeperiod = col_character(),
+  TimeperiodSortable = col_double()
+)
+
+geog_lookup = list('101' = c('E06000033', 'E06000034', 'E07000066', 
+                           'E07000067', 'E07000068', 'E07000069', 
+                           'E07000070', 'E07000074', 'E07000075'),
+                   '152' = c('E38000007', 'E38000030', 'E38000106', 
+                           'E38000168', 'E38000185'),
+                   '154' = c('E38000007', 'E38000030', 'E38000106', 
+                           'E38000168', 'E38000185'),
+                   '165' = c('E38000007', 'E38000030', 'E38000106', 
+                           'E38000168', 'E38000185'))
+
 get_data = function(indicator_id, geog_type, out_path = './data/'){
   # Get indicator data at a specified geographic level.
   #
@@ -22,3 +48,50 @@ get_data = function(indicator_id, geog_type, out_path = './data/'){
     write_csv(df, file_name)
   }
 }
+
+plot_bars = function(indicator_id, geog_type, data_path = './data/'){
+  # Plots latest data as bar chart, with error bars
+  
+  # Load data
+  data_path = paste0(data_path, indicator_id, '_', geog_type, '.csv')
+  df = read_csv(data_path, col_types = col_spec)
+  
+  # Filter to latest data for geog_type
+  geog_ids = geog_lookup[as.character(geog_type)][[1]]
+  latest_time = tail(df$Timeperiod, 1)
+  
+  plot_df = df %>%
+    filter(AreaCode %in% geog_ids &
+           Timeperiod == latest_time)
+  
+  # Plot
+  p = ggplot(plot_df, aes(x = AreaName, y = Value)) +
+    geom_bar(position = 'dodge', stat = 'identity')
+  
+  return(p)
+}
+
+plot_bars(93307, 154)
+
+
+plot_trend = function(indicator_id, geog_type){
+  # Plots all data in df
+}
+
+
+plot_map = function(df, geog){
+  
+}
+
+
+
+df = read_csv('./data/1203_101.csv', col_types = col_spec)
+
+
+
+
+
+
+
+
+
