@@ -59,6 +59,32 @@ load_data = function(indicator_id, geog_type, data_path = './data/'){
   return(df)
 }
 
+rank_areas = function(indicator_id, geog_type, data_path = './data/'){
+  # Ranks areas by value, compares areas by looking at confidence
+  # interval overlap compared to England value
+  
+  df = load_data(indicator_id, geog_type, data_path)
+  
+  # Create plot dataframes & plot
+  geog_ids = geog_lookup[as.character(geog_type)][[1]]
+  latest_time = tail(df$Timeperiod, 1)
+  comparator = df %>%
+    filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
+  
+  df_rank = df %>%
+    filter(AreaCode %in% geog_ids & Timeperiod == latest_time) %>%
+    group_by(Sex, Age) %>%
+    arrange(desc(Value)) %>%
+    select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
+           LowerCI95.0limit, UpperCI95.0limit) %>%
+    mutate(diff_vs_eng = ifelse(UpperCI95.0limit < comparator$LowerCI95.0limit,
+                                'Lower',
+                                ifelse(comparator$UpperCI95.0limit < LowerCI95.0limit,
+                                       'Higher', 'Similar')))
+  
+  return(df_rank)
+}
+
 plot_bars = function(indicator_id, geog_type, data_path = './data/'){
   # Plots latest data as bar chart, with error bars
   
