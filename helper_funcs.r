@@ -78,9 +78,10 @@ rank_areas = function(indicator_id, geog_type, data_path = './data/'){
     select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
            LowerCI95.0limit, UpperCI95.0limit) %>%
     mutate(diff_vs_eng = ifelse(UpperCI95.0limit < comparator$LowerCI95.0limit,
-                                'Lower',
-                                ifelse(comparator$UpperCI95.0limit < LowerCI95.0limit,
-                                       'Higher', 'Similar')))
+                                'Lower', 
+                                  ifelse(comparator$UpperCI95.0limit < LowerCI95.0limit,
+                                          'Higher', 
+                                          'Similar')))
   
   return(df_rank)
 }
@@ -110,7 +111,7 @@ plot_bars = function(indicator_id, geog_type, data_path = './data/'){
 
 
 plot_trend = function(indicator_id, geog_type, areas, data_path = './data/'){
-  # Plots all data in df for specific areas
+  # Plots all historic data for the areas specified
   
   df = load_data(indicator_id, geog_type, data_path)
   
