@@ -1,18 +1,23 @@
-library(tidyverse)
-library(fingertipsR)
-
 source('./helper_funcs.r')
 
 indicator_list = read_csv('./indicator_list.csv')
-i= 5
+
 for (i in 1:nrow(indicator_list)){
   id = indicator_list$id[[i]]
   geog_id = indicator_list$geog_id[[i]]
   
+  # Download data
+  if (!dir.exisits('./data/')){
+    dir.create('./data/')
+  }
   get_data(id, geog_id)
+  
+  # Make plots
   bar = plot_bars(id, geog_id)
   ranks = rank_areas(id, geog_id)
-  trend = plot_trend(id, geog_id, c('Chelmsford', 'Colchester', 'England'))
+  best = head(ranks$AreaName, 1)
+  worst = tail(ranks$AreaName, 1)
+  trend = plot_trend(id, geog_id, c(best, worst, 'England'))
   
   # Write out
   if (!dir.exists('./out/')) {
