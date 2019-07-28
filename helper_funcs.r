@@ -109,14 +109,48 @@ plot_bars = function(indicator_id, geog_type, data_path = './data/'){
 }
 
 
-plot_trend = function(indicator_id, geog_type, data_path = './data/'){
-  # Plots all data in df
+plot_trend = function(indicator_id, geog_type, areas, data_path = './data/'){
+  # Plots all data in df for specific areas
   
   df = load_data(indicator_id, geog_type, data_path)
+  
+  df_plot = df %>%
+    filter(AreaName %in% areas)
+  
+  p = ggplot(df_plot, aes(x = Timeperiod, y = Value, 
+                          colour = AreaName, group = AreaName)) +
+    geom_point() +
+    geom_line()
+  
+  return(p)
+}
+
+plot_tiefighters = function(indicator_id, geog_type, data_path = './data/'){
+  # Similar to plot_bar, but plots each area as a point
+  
+  df_plot = rank_areas(indicator_id, geog_type)
+  comp = load_data(indicator_id, geog_type)
+  comp = comp %>%
+    filter(AreaName == 'England' & Timeperiod == tail(comp$Timeperiod, 1))
+  
+  plot = df_plot %>%
+    mutate(AreaName = fct_reorder(AreaName, Value)) %>%
+    ggplot(aes(x = Value, y = AreaName)) +
+    geom_point() +
+    geom_errorbarh(aes(xmin = LowerCI95.0limit, xmax = UpperCI95.0limit)) +
+    geom_vline(aes(xintercept = Value), comp)
+  
+  return(plot)
 }
 
 
-plot_theme = function(plot){
-  # Applies theme to plot - use this to ensure consitent formatting between
-  # plots
-}
+comp = load_data(22001, 101)
+comp = comp %>%
+  filter(AreaName == 'England' & Timeperiod == tail(comp$Timeperiod, 1))
+
+t %>%
+  mutate(AreaName = fct_reorder(AreaName, Value)) %>%
+ggplot(aes(x = Value, y = AreaName)) + 
+  geom_point() + 
+  geom_errorbarh(aes(xmin = LowerCI95.0limit, xmax = UpperCI95.0limit)) +
+  geom_vline(aes(xintercept = Value), comp)
