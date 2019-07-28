@@ -97,11 +97,15 @@ plot_bars = function(df, area_codes, data_path = './data/'){
     geom_bar(position = 'dodge', stat = 'identity') +
     geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
                   width = 0.2) +
-    geom_hline(data = df_comparator, mapping = aes(yintercept = Value))
+    geom_hline(data = df_comparator, mapping = aes(yintercept = Value)) +
+    theme_light() +
+    theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
+    labs(x = NULL, y = NULL,
+         title = df_bar$IndicatorName[[1]],
+         subtitle = paste(latest_time, df_bar$Sex[[1]], df_bar$Age[[1]]))
   
   return(bar_plot)
 }
-
 
 plot_trend = function(df, areas, data_path = './data/'){
   # Plots all historic data for the areas specified
@@ -112,7 +116,12 @@ plot_trend = function(df, areas, data_path = './data/'){
   p = ggplot(df_plot, aes(x = Timeperiod, y = Value, 
                           colour = AreaName, group = AreaName)) +
     geom_point() +
-    geom_line()
+    geom_line() +
+    theme_light() +
+    theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
+    labs(x = NULL, y = NULL,
+         title = df_plot$IndicatorName[[1]],
+         subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]]))
   
   return(p)
 }
@@ -120,7 +129,10 @@ plot_trend = function(df, areas, data_path = './data/'){
 plot_tiefighters = function(indicator_id, geog_type, data_path = './data/'){
   # Similar to plot_bar, but plots each area as a point
   
-  df_plot = rank_areas(indicator_id, geog_type)
+  df = load_data(indicator_id, geog_type)
+  area_codes = geog_lookup[as.character(geog_type)][[1]]
+  
+  df_plot = rank_areas(df, area_codes)
   comp = load_data(indicator_id, geog_type)
   comp = comp %>%
     filter(AreaName == 'England' & Timeperiod == tail(comp$Timeperiod, 1))

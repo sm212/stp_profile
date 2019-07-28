@@ -13,9 +13,7 @@ for (i in 1:nrow(indicator_list)){
   get_data(id, geog_id)
   df = load_data(id, geog_id)
   
-  # Load data
   area_codes = geog_lookup[as.character(geog_id)][[1]]
-  
   
   # Make outputs for each sex & age combination
   sex_values = unique(df$Sex)
