@@ -142,15 +142,3 @@ plot_tiefighters = function(indicator_id, geog_type, data_path = './data/'){
   
   return(plot)
 }
-
-
-comp = load_data(22001, 101)
-comp = comp %>%
-  filter(AreaName == 'England' & Timeperiod == tail(comp$Timeperiod, 1))
-
-t %>%
-  mutate(AreaName = fct_reorder(AreaName, Value)) %>%
-ggplot(aes(x = Value, y = AreaName)) + 
-  geom_point() + 
-  geom_errorbarh(aes(xmin = LowerCI95.0limit, xmax = UpperCI95.0limit)) +
-  geom_vline(aes(xintercept = Value), comp)
