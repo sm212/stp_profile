@@ -7,17 +7,22 @@ for (i in 1:nrow(indicator_list)){
   geog_id = indicator_list$geog_id[[i]]
   
   # Download data
-  if (!dir.exisits('./data/')){
+  if (!dir.exists('./data/')){
     dir.create('./data/')
   }
   get_data(id, geog_id)
+  df = load_data(id, geog_id)
+  
+  # Load data
+  area_codes = geog_lookup[as.character(geog_id)][[1]]
+  
   
   # Make plots
-  bar = plot_bars(id, geog_id)
-  ranks = rank_areas(id, geog_id)
+  bar = plot_bars(df, area_codes)
+  ranks = rank_areas(df, area_codes)
   best = head(ranks$AreaName, 1)
   worst = tail(ranks$AreaName, 1)
-  trend = plot_trend(id, geog_id, c(best, worst, 'England'))
+  trend = plot_trend(df, area_codes, c(best, worst, 'England'))
   
   # Write out
   if (!dir.exists('./out/')) {
