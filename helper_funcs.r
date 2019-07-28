@@ -29,18 +29,18 @@ geog_lookup = list('101' = c('E06000033', 'E06000034', 'E07000066',
                    '165' = c('E38000007', 'E38000030', 'E38000106', 
                            'E38000168', 'E38000185'))
 
-get_data = function(indicator_id, geog_type, out_path = './data/'){
+get_data = function(indicator_id, geog_type, data_path = './data/'){
   # Get indicator data at a specified geographic level.
   #
-  # Checks if file already exists in out_path folder. Function only downloads
+  # Checks if file already exists in data_path folder. Function only downloads
   # data if file not found.
   #
   # Saves files with the name <indicator_id>_<geog_type>.csv
   
-  file_name = paste0(out_path, indicator_id, '_', geog_type, '.csv')
+  file_name = paste0(data_path, indicator_id, '_', geog_type, '.csv')
   
   if (file.exists(file_name)){
-    cat('File already exisits in', out_path, '\n')
+    cat('File already exisits in', data_path, '\n')
   }
   else{
     df = fingertips_data(IndicatorID = indicator_id,
@@ -90,7 +90,7 @@ plot_trend = function(indicator_id, geog_type, data_path = './data/'){
 }
 
 
-plot_map = function(indicator_id, geog_type, data_path = './data/'){
-  
-  df = load_data(indicator_id, geog_type, data_path)
+plot_theme = function(plot){
+  # Applies theme to plot - use this to ensure consitent formatting between
+  # plots
 }
