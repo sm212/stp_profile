@@ -17,7 +17,7 @@
 22002,101,Cancer screening coverage - cervical cancer,cancer
 276,152,Cancer: QOF prevalence (all ages),cancer
 90988,152,CHD admissions (all ages),chd
-273,101,CHD: QOF prevalence (all ages),chd
+273,152,CHD: QOF prevalence (all ages),chd
 91085,152,CHD002: Last BP reading in last 12mths is <=150/90 (den.incl.exc.),chd
 91059,152,"Coronary heart disease mortality rates, under 75 years",chd
 92589,3,CVD-PP: QOF prevalence (30-74),chd
@@ -50,7 +50,7 @@
 90987,152,Heart failure admissions (all ages),chd
 262,152,Heart Failure: QOF prevalence (all ages),chd
 91089,152,HYP006: Blood pressure <= 150/90 mmHg in people with hypertension,chd
-219,101,Hypertension: QOF prevalence (all ages),chd
+219,152,Hypertension: QOF prevalence (all ages),chd
 93235,101,"Incidence of breast cancer, standardised incidence ratio",cancer
 93236,101,"Incidence of colorectal cancer, standardised incidence ratio",cancer
 93237,101,"Incidence of lung cancer, standardised incidence ratio",cancer
@@ -71,13 +71,13 @@
 92263,154,PTSD in perinatal period: Estimated number of women,maternity
 93327,152,Ratio of people with type 1 diabetes who received all 8 care processes,diabetes
 93328,152,Ratio of people with type 2 diabetes who received all 8 care processes,diabetes
-1202,101,Smoking attributable deaths from stroke,stroke
+1202,152,Smoking attributable deaths from stroke,stroke
 93085,101,Smoking status at time of delivery,maternity
 91468,152,Stroke admissions (Sentinel Stroke National Audit Programme),stroke
 91462,3,Stroke admissions with history of atrial fibrillation not prescribed anticoagulation prior to stroke,stroke
 91106,152,"Stroke mortality rates, over 75 years (age standardised)",stroke
 91061,152,"Stroke mortality rates, under 75 years (age standardised)",stroke
-212,101,Stroke: QOF prevalence (all ages),stroke
+212,152,Stroke: QOF prevalence (all ages),stroke
 91845,152,Two-week referrals resulting in a diagnosis of cancer (Conversion rate: as % of all TWW referrals).,cancer
 91344,154,Two-week wait referrals (Indirectly age-sex standardised referral ratio),cancer
 91882,152,"Two-week wait referrals for suspected cancer (Number per 100,000 population)",cancer
