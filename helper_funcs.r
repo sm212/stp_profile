@@ -1,5 +1,6 @@
 library(tidyverse)
 library(fingertipsR)
+library(RColorBrewer)
 
 # Specify which columns to read in from .csv's
 col_spec = cols(
@@ -28,6 +29,10 @@ geog_lookup = list('101' = c('E06000033', 'E06000034', 'E07000066',
                            'E38000168', 'E38000185'),
                    '165' = c('E38000007', 'E38000030', 'E38000106', 
                            'E38000168', 'E38000185'))
+
+# Colours
+blues = brewer.pal(12, 'Blues')
+sig = rev(brewer.pal(3, 'Accent'))
 
 get_data = function(indicator_id, geog_type, data_path = './data/'){
   # Get indicator data at a specified geographic level.
@@ -94,7 +99,7 @@ plot_bars = function(df, area_codes, data_path = './data/'){
     filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
   
   bar_plot = ggplot(df_bar, aes(x = AreaName, y = Value)) +
-    geom_bar(position = 'dodge', stat = 'identity') +
+    geom_bar(position = 'dodge', stat = 'identity', fill = 'deepskyblue4') +
     geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
                   width = 0.2) +
     geom_hline(data = df_comparator, mapping = aes(yintercept = Value)) +
@@ -103,7 +108,7 @@ plot_bars = function(df, area_codes, data_path = './data/'){
     labs(x = NULL, y = NULL,
          title = df_bar$IndicatorName[[1]],
          subtitle = paste(latest_time, df_bar$Sex[[1]], df_bar$Age[[1]]))
-  
+
   return(bar_plot)
 }
 
@@ -121,7 +126,8 @@ plot_trend = function(df, areas, data_path = './data/'){
     theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
     labs(x = NULL, y = NULL,
          title = df_plot$IndicatorName[[1]],
-         subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]]))
+         subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]])) +
+    scale_colour_manual(values = sig)
   
   return(p)
 }
@@ -139,10 +145,14 @@ plot_tiefighters = function(indicator_id, geog_type, data_path = './data/'){
   
   plot = df_plot %>%
     mutate(AreaName = fct_reorder(AreaName, Value)) %>%
-    ggplot(aes(x = Value, y = AreaName)) +
-    geom_point() +
-    geom_errorbarh(aes(xmin = LowerCI95.0limit, xmax = UpperCI95.0limit)) +
-    geom_vline(aes(xintercept = Value), comp)
+    ggplot(aes(x = AreaName, y = Value)) +
+    geom_ribbon(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit), 
+                colour = 'grey80', size = 2.5, alpha = 0.75) +
+    geom_hline(aes(yintercept = Value), comp, colour = 'grey50', size = 1) +
+    geom_point(size = 4, aes(colour = diff_vs_eng)) +
+    coord_flip() +
+    theme_light() +
+    scale_colour_manual(values = sig)
   
   return(plot)
 }
