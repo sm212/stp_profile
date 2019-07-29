@@ -13,6 +13,10 @@ for (i in 1:nrow(indicator_list)){
   get_data(id, geog_id)
   df = load_data(id, geog_id)
   
+  # Remove NHS & CCG from area names
+  df$AreaName = str_replace_all(df$AreaName, 'NHS ', '')
+  df$AreaName  = str_replace_all(df$AreaName, ' CCG', '')
+  
   area_codes = geog_lookup[as.character(geog_id)][[1]]
   
   # Make outputs for each sex & age combination
@@ -25,6 +29,7 @@ for (i in 1:nrow(indicator_list)){
         filter(Sex == sex & Age == age)
       
       bar = plot_bars(df_filtered, area_codes)
+      point = plot_tiefighters(df_filtered, area_codes)
       ranks = rank_areas(df_filtered, area_codes)
       best = head(ranks$AreaName, 1)
       worst = tail(ranks$AreaName, 1)
@@ -37,9 +42,15 @@ for (i in 1:nrow(indicator_list)){
       
       file_suffix = paste0('_', sex, '_', age)
       file_suffix = str_replace(file_suffix, '[><]', '')
+      width = 17
+      height = 12
       
-      ggsave(paste0('./out/bar', id, '_', geog_id, file_suffix, '.png'), bar)
-      ggsave(paste0('./out/trend', id, '_', geog_id, file_suffix, '.png'), trend)
+      ggsave(paste0('./out/bar', id, '_', geog_id, file_suffix, '.png'), 
+             bar, width = width, height = height, units = 'cm')
+      ggsave(paste0('./out/point', id, '_', geog_id, file_suffix, '.png'), 
+             point, width = width, height = height, units = 'cm')
+      ggsave(paste0('./out/trend', id, '_', geog_id, file_suffix, '.png'), 
+             trend, width = width, height = height, units = 'cm')
       write_csv(ranks, paste0('./out/rank', id, '_', geog_id, file_suffix, '.csv'))
     }
   }

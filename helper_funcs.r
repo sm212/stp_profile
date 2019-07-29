@@ -98,18 +98,21 @@ plot_bars = function(df, area_codes, data_path = './data/'){
   df_comparator = df %>%
     filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
   
-  bar_plot = ggplot(df_bar, aes(x = AreaName, y = Value)) +
-    geom_bar(position = 'dodge', stat = 'identity', fill = 'deepskyblue4') +
-    geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
-                  width = 0.2) +
-    geom_hline(data = df_comparator, mapping = aes(yintercept = Value)) +
-    theme_light() +
-    theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
-    labs(x = NULL, y = NULL,
-         title = df_bar$IndicatorName[[1]],
-         subtitle = paste(latest_time, df_bar$Sex[[1]], df_bar$Age[[1]]))
-
-  return(bar_plot)
+  if (nrow(df_bar) > 0){
+    bar_plot = ggplot(df_bar, aes(x = AreaName, y = Value)) +
+      geom_bar(position = 'dodge', stat = 'identity', fill = 'deepskyblue4') +
+      geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
+                    width = 0.2) +
+      geom_hline(data = df_comparator, mapping = aes(yintercept = Value)) +
+      theme_light() +
+      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
+      labs(x = NULL, y = NULL,
+           title = df_bar$IndicatorName[[1]],
+           subtitle = paste(latest_time, df_bar$Sex[[1]], df_bar$Age[[1]]))
+    
+    return(bar_plot)  
+  }
+  
 }
 
 plot_trend = function(df, areas, data_path = './data/'){
@@ -118,41 +121,49 @@ plot_trend = function(df, areas, data_path = './data/'){
   df_plot = df %>%
     filter(AreaName %in% areas)
   
-  p = ggplot(df_plot, aes(x = Timeperiod, y = Value, 
-                          colour = AreaName, group = AreaName)) +
-    geom_point() +
-    geom_line() +
-    theme_light() +
-    theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
-    labs(x = NULL, y = NULL,
-         title = df_plot$IndicatorName[[1]],
-         subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]])) +
-    scale_colour_manual(values = sig)
-  
-  return(p)
+  if (nrow(df_plot) > 0){
+    p = ggplot(df_plot, aes(x = Timeperiod, y = Value, 
+                            colour = AreaName, group = AreaName)) +
+      geom_point() +
+      geom_line() +
+      theme_light() +
+      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
+      labs(x = NULL, y = NULL,
+           title = df_plot$IndicatorName[[1]],
+           subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]])) +
+      scale_colour_manual(values = sig)
+    
+    return(p)
+  }
+
 }
 
-plot_tiefighters = function(indicator_id, geog_type, data_path = './data/'){
+plot_tiefighters = function(df, area_codes, data_path = './data/'){
   # Similar to plot_bar, but plots each area as a point
   
-  df = load_data(indicator_id, geog_type)
-  area_codes = geog_lookup[as.character(geog_type)][[1]]
-  
   df_plot = rank_areas(df, area_codes)
-  comp = load_data(indicator_id, geog_type)
-  comp = comp %>%
-    filter(AreaName == 'England' & Timeperiod == tail(comp$Timeperiod, 1))
   
-  plot = df_plot %>%
-    mutate(AreaName = fct_reorder(AreaName, Value)) %>%
-    ggplot(aes(x = AreaName, y = Value)) +
-    geom_ribbon(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit), 
-                colour = 'grey80', size = 2.5, alpha = 0.75) +
-    geom_hline(aes(yintercept = Value), comp, colour = 'grey50', size = 1) +
-    geom_point(size = 4, aes(colour = diff_vs_eng)) +
-    coord_flip() +
-    theme_light() +
-    scale_colour_manual(values = sig)
+  latest_time = tail(df$Timeperiod, 1)
+  comparator = df %>%
+    filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
   
-  return(plot)
+  if (nrow(df_plot) > 0){
+    plot = df_plot %>%
+      mutate(AreaName = fct_reorder(AreaName, Value)) %>%
+      ggplot(aes(x = AreaName, y = Value)) +
+      geom_ribbon(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit), 
+                  colour = 'grey80', size = 2.5, alpha = 0.75) +
+      geom_hline(aes(yintercept = Value), comparator, 
+                 colour = 'grey50', size = 1) +
+      geom_point(size = 4, aes(colour = diff_vs_eng)) +
+      coord_flip() +
+      theme_light() +
+      scale_colour_manual(values = sig) +
+      labs(x = NULL, y = NULL,
+           title = df_plot$IndicatorName[[1]],
+           subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]]))
+    
+    return(plot)
+  }
+  
 }
