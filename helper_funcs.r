@@ -58,7 +58,7 @@ load_data = function(indicator_id, geog_type, data_path = './data/'){
   # Loads csv into a dataframe if it exists in data_path, else return FALSE
   
   file_name = paste0(data_path, indicator_id, '_', geog_type, '.csv')
-  if (file.exists(data_path)){
+  if (file.exists(file_name)){
     df = read_csv(file_name, col_types = col_spec)  
   }
   else{
@@ -142,9 +142,22 @@ plot_bars = function(df, area_codes, time, data_path = './data/'){
            title = df_bar$IndicatorName[[1]],
            subtitle = paste(time, df_bar$Sex[[1]], df_bar$Age[[1]]))
     
-    return(bar_plot)  
+    # Try to add in Essex line as well
+    indicator_id = head(df$IndicatorID, 1)
+    df_essex = load_data(indicator_id, 102) 
+    df_essex = df_essex %>%
+      filter(AreaCode == 'E10000012' & Timeperiod == time)
+    
+    message(nrow(df_essex))
+    
+    if (nrow(df_essex) > 0){
+      bar_plot = bar_plot + 
+        geom_hline(data = df_essex, mapping = aes(yintercept = Value), 
+                   linetype = 'dashed')
+    }
+    
+    return(bar_plot)
   }
-  
 }
 
 plot_trend = function(df, areas, data_path = './data/'){
