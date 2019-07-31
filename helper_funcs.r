@@ -137,7 +137,9 @@ plot_bars = function(df, area_codes, time, data_path = './data/'){
                     width = 0.2) +
       geom_hline(data = df_comparator, mapping = aes(yintercept = Value)) +
       theme_light() +
-      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
+      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1),
+            panel.grid.major.x = element_blank(),
+            panel.grid.minor.y = element_blank()) +
       labs(x = NULL, y = NULL,
            title = df_bar$IndicatorName[[1]],
            subtitle = paste(time, df_bar$Sex[[1]], df_bar$Age[[1]]))
@@ -147,9 +149,7 @@ plot_bars = function(df, area_codes, time, data_path = './data/'){
     df_essex = load_data(indicator_id, 102) 
     df_essex = df_essex %>%
       filter(AreaCode == 'E10000012' & Timeperiod == time)
-    
-    message(nrow(df_essex))
-    
+  
     if (nrow(df_essex) > 0){
       bar_plot = bar_plot + 
         geom_hline(data = df_essex, mapping = aes(yintercept = Value), 
