@@ -60,51 +60,63 @@ load_data = function(indicator_id, geog_type, data_path = './data/'){
   file_name = paste0(data_path, indicator_id, '_', geog_type, '.csv')
   if (file.exists(data_path)){
     df = read_csv(file_name, col_types = col_spec)  
-    return(df)
   }
   else{
-    
-    df = read_csv('./data/empty.csv')
+    df = read_csv('./data/empty.csv', col_types = col_spec)
   }
   
   return(df)
 }
 
 rank_areas = function(df, area_codes, time, comparator = 'England',
-                      data_path = './data/'){
+                      add_comparator = F, data_path = './data/'){
   # Ranks areas by value, compares areas by looking at confidence
   # interval overlap compared to `comparator`
   
-  # Get comparator
-  if (comparator == 'England'){
-    df_comp = df %>%
-      filter(AreaCode == 'E92000001' & Timeperiod == time)
+  if (comparator != 'England' | comparator != 'Essex') {
+    stop('Allowed values for comparator are "England" or "Essex".')
   }
-  else if (comparator == 'Essex'){
+  
+  # Get comparator - default is England
+  df_comp = df %>%
+    filter(AreaCode == 'E92000001' & Timeperiod == time)
+
+  if (comparator == 'Essex'){
+    # Try to get Essex level data for specified `time`
+    indicator_id = head(df$IndicatorID, 1)
+    df_essex = load_data(indicator_id, 102) 
+    df_essex = df_essex %>%
+      filter(AreaCode == 'E10000012' & Timeperiod == time)
     
+    if (nrow(df_essex) == 0){
+      message('Essex level data not available - defaulting to England')
+    }
+    else{
+      df_comp = df_essex
+    }
   }
 
-  
+  # Compute ranks
   df_rank = df %>%
     filter(AreaCode %in% area_codes & Timeperiod == time) %>%
     group_by(Sex, Age) %>%
     arrange(desc(Value)) %>%
     select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
            LowerCI95.0limit, UpperCI95.0limit) %>%
-    mutate(diff_vs_eng = ifelse(UpperCI95.0limit < comparator$LowerCI95.0limit, 
+    mutate(diff_vs_eng = ifelse(UpperCI95.0limit < df_comp$LowerCI95.0limit, 
                                 'Lower', 
-                                ifelse(comparator$UpperCI95.0limit < LowerCI95.0limit,
+                                ifelse(df_comp$UpperCI95.0limit < LowerCI95.0limit,
                                        'Higher', 
-                                       'Similar')),
+                                       'Further tests needed')),
            rank = dense_rank(desc(Value))) %>%
     mutate_if(is.numeric, ~round(., 2))
   
   if (add_comparator == T){
-    comparator = comparator %>%
+    df_comp = df_comp %>%
       select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
              LowerCI95.0limit, UpperCI95.0limit)
     
-    df_rank = bind_rows(list(df_rank, comparator))
+    df_rank = bind_rows(list(df_rank, df_comp))
   }
   
   return(df_rank)
