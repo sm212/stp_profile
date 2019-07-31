@@ -32,10 +32,12 @@ for (i in 1:nrow(indicator_list)){
       
       bar = plot_bars(df_filtered, area_codes, latest_time)
       point = plot_tiefighters(df_filtered, area_codes)
-      ranks = rank_areas(df_filtered, area_codes)
+      ranks = rank_areas(df_filtered, area_codes, latest_time)
       best = head(ranks$AreaName, 1)
       worst = tail(ranks$AreaName, 1)
       trend = plot_trend(df_filtered, c(best, worst, 'England'))
+      rank_out = rank_areas(df_filtered, area_codes, latest_time, 
+                            add_comparator = T)
       
       # Write out
       if (!dir.exists('./out/')) {
@@ -53,7 +55,7 @@ for (i in 1:nrow(indicator_list)){
              point, width = width, height = height, units = 'cm')
       ggsave(paste0('./out/trend', id, '_', geog_id, file_suffix, '.png'), 
              trend, width = width, height = height, units = 'cm')
-      write_csv(ranks, paste0('./out/rank', id, '_', geog_id, file_suffix, '.csv'))
+      write_csv(rank_out, paste0('./out/rank', id, '_', geog_id, file_suffix, '.csv'))
     }
   }
 }

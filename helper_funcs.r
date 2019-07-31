@@ -64,19 +64,17 @@ load_data = function(indicator_id, geog_type, data_path = './data/'){
   return(df)
 }
 
-rank_areas = function(df, area_codes, add_comparator = F,
+rank_areas = function(df, area_codes, time, add_comparator = F,
                       data_path = './data/'){
   # Ranks areas by value, compares areas by looking at confidence
   # interval overlap compared to England value
   
-  
-  # Create plot dataframes & plot
-  latest_time = tail(df$Timeperiod, 1)
+  # Filter to relevant Timeperiod & rank
   comparator = df %>%
-    filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
+    filter(AreaCode == 'E92000001' & Timeperiod == time)
   
   df_rank = df %>%
-    filter(AreaCode %in% area_codes & Timeperiod == latest_time) %>%
+    filter(AreaCode %in% area_codes & Timeperiod == time) %>%
     group_by(Sex, Age) %>%
     arrange(desc(Value)) %>%
     select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
