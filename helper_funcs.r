@@ -31,7 +31,6 @@ geog_lookup = list('101' = c('E06000033', 'E06000034', 'E07000066',
                              'E38000168', 'E38000185'))
 
 # Colours
-blues = brewer.pal(12, 'Blues')
 sig = rev(brewer.pal(3, 'Accent'))
 
 get_data = function(indicator_id, geog_type, data_path = './data/'){
@@ -56,22 +55,35 @@ get_data = function(indicator_id, geog_type, data_path = './data/'){
 }
 
 load_data = function(indicator_id, geog_type, data_path = './data/'){
-  # Loads csv into a dataframe
+  # Loads csv into a dataframe if it exists in data_path, else return FALSE
   
-  data_path = paste0(data_path, indicator_id, '_', geog_type, '.csv')
-  df = read_csv(data_path, col_types = col_spec)  
+  file_name = paste0(data_path, indicator_id, '_', geog_type, '.csv')
+  if (file.exists(data_path)){
+    df = read_csv(file_name, col_types = col_spec)  
+    return(df)
+  }
+  else{
+    
+    df = read_csv('./data/empty.csv')
+  }
   
   return(df)
 }
 
-rank_areas = function(df, area_codes, time, add_comparator = F,
+rank_areas = function(df, area_codes, time, comparator = 'England',
                       data_path = './data/'){
   # Ranks areas by value, compares areas by looking at confidence
-  # interval overlap compared to England value
+  # interval overlap compared to `comparator`
   
-  # Filter to relevant Timeperiod & rank
-  comparator = df %>%
-    filter(AreaCode == 'E92000001' & Timeperiod == time)
+  # Get comparator
+  if (comparator == 'England'){
+    df_comp = df %>%
+      filter(AreaCode == 'E92000001' & Timeperiod == time)
+  }
+  else if (comparator == 'Essex'){
+    
+  }
+
   
   df_rank = df %>%
     filter(AreaCode %in% area_codes & Timeperiod == time) %>%
