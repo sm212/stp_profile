@@ -135,14 +135,9 @@ plot_bars = function(df, area_codes, time, data_path = './data/'){
       geom_bar(position = 'dodge', stat = 'identity', fill = 'deepskyblue4') +
       geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
                     width = 0.2) +
-      geom_hline(data = df_comparator, mapping = aes(yintercept = Value)) +
-      theme_light() +
-      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1),
-            panel.grid.major.x = element_blank(),
-            panel.grid.minor.y = element_blank()) +
-      labs(x = NULL, y = NULL,
-           title = df_bar$IndicatorName[[1]],
-           subtitle = paste(time, df_bar$Sex[[1]], df_bar$Age[[1]]))
+      geom_hline(data = df_comparator, mapping = aes(yintercept = Value,
+                                                     linetype = 'England')) +
+      theme_light() 
     
     # Try to add in Essex line as well
     indicator_id = head(df$IndicatorID, 1)
@@ -152,9 +147,21 @@ plot_bars = function(df, area_codes, time, data_path = './data/'){
   
     if (nrow(df_essex) > 0){
       bar_plot = bar_plot + 
-        geom_hline(data = df_essex, mapping = aes(yintercept = Value), 
-                   linetype = 'dashed')
+        geom_hline(data = df_essex, mapping = aes(yintercept = Value,
+                                                  linetype = 'Essex'))
     }
+    
+    # Edit theme
+    bar_plot = bar_plot +
+      scale_colour_manual(name = '', values = c('England' = 'solid',
+                                                'Essex' = 'dashed')) +
+      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1),
+            panel.grid.major.x = element_blank(),
+            panel.grid.minor.y = element_blank(),
+            legend.title = element_blank()) +
+      labs(x = NULL, y = NULL,
+           title = df_bar$IndicatorName[[1]],
+           subtitle = paste(time, df_bar$Sex[[1]], df_bar$Age[[1]]))
     
     return(bar_plot)
   }
