@@ -13,6 +13,7 @@ for (i in 1:nrow(indicator_list)){
   get_data(id, geog_id)
   get_data(id, 102) # Try to get county level data
   df = load_data(id, geog_id)
+  latest_time = tail(df$Timeperiod, 1)
   
   # Remove NHS & CCG from area names
   df$AreaName = str_replace_all(df$AreaName, 'NHS ', '')
@@ -29,7 +30,7 @@ for (i in 1:nrow(indicator_list)){
       df_filtered = df %>%
         filter(Sex == sex & Age == age)
       
-      bar = plot_bars(df_filtered, area_codes)
+      bar = plot_bars(df_filtered, area_codes, latest_time)
       point = plot_tiefighters(df_filtered, area_codes)
       ranks = rank_areas(df_filtered, area_codes)
       best = head(ranks$AreaName, 1)

@@ -100,14 +100,13 @@ rank_areas = function(df, area_codes, add_comparator = F,
   return(df_rank)
 }
 
-plot_bars = function(df, area_codes, data_path = './data/'){
+plot_bars = function(df, area_codes, time, data_path = './data/'){
   # Plots latest data as bar chart, with error bars
   
-  latest_time = tail(df$Timeperiod, 1)
   df_bar = df %>%
-    filter(AreaCode %in% area_codes & Timeperiod == latest_time)
+    filter(AreaCode %in% area_codes & Timeperiod == time)
   df_comparator = df %>%
-    filter(AreaCode == 'E92000001' & Timeperiod == latest_time)
+    filter(AreaCode == 'E92000001' & Timeperiod == time)
   
   if (nrow(df_bar) > 0){
     bar_plot = ggplot(df_bar, aes(x = AreaName, y = Value)) +
@@ -119,7 +118,7 @@ plot_bars = function(df, area_codes, data_path = './data/'){
       theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
       labs(x = NULL, y = NULL,
            title = df_bar$IndicatorName[[1]],
-           subtitle = paste(latest_time, df_bar$Sex[[1]], df_bar$Age[[1]]))
+           subtitle = paste(time, df_bar$Sex[[1]], df_bar$Age[[1]]))
     
     return(bar_plot)  
   }
