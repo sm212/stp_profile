@@ -11,6 +11,7 @@ for (i in 1:nrow(indicator_list)){
     dir.create('./data/')
   }
   get_data(id, geog_id)
+  get_data(id, 102) # Try to get county level data
   df = load_data(id, geog_id)
   
   # Remove NHS & CCG from area names
