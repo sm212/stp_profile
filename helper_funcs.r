@@ -21,14 +21,14 @@ col_spec = cols(
 
 # Lookup - Underlying Essex geographies for each health geography
 geog_lookup = list('101' = c('E06000033', 'E06000034', 'E07000066', 
-                           'E07000067', 'E07000068', 'E07000069', 
-                           'E07000070', 'E07000074', 'E07000075'),
+                             'E07000067', 'E07000068', 'E07000069', 
+                             'E07000070', 'E07000074', 'E07000075'),
                    '152' = c('E38000007', 'E38000030', 'E38000106', 
-                           'E38000168', 'E38000185'),
+                             'E38000168', 'E38000185'),
                    '154' = c('E38000007', 'E38000030', 'E38000106', 
-                           'E38000168', 'E38000185'),
+                             'E38000168', 'E38000185'),
                    '165' = c('E38000007', 'E38000030', 'E38000106', 
-                           'E38000168', 'E38000185'))
+                             'E38000168', 'E38000185'))
 
 # Colours
 blues = brewer.pal(12, 'Blues')
@@ -57,18 +57,19 @@ get_data = function(indicator_id, geog_type, data_path = './data/'){
 
 load_data = function(indicator_id, geog_type, data_path = './data/'){
   # Loads csv into a dataframe
-
+  
   data_path = paste0(data_path, indicator_id, '_', geog_type, '.csv')
   df = read_csv(data_path, col_types = col_spec)  
   
   return(df)
 }
 
-rank_areas = function(df, area_codes, data_path = './data/'){
+rank_areas = function(df, area_codes, add_comparator = F,
+                      data_path = './data/'){
   # Ranks areas by value, compares areas by looking at confidence
   # interval overlap compared to England value
   
-
+  
   # Create plot dataframes & plot
   latest_time = tail(df$Timeperiod, 1)
   comparator = df %>%
@@ -81,17 +82,27 @@ rank_areas = function(df, area_codes, data_path = './data/'){
     select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
            LowerCI95.0limit, UpperCI95.0limit) %>%
     mutate(diff_vs_eng = ifelse(UpperCI95.0limit < comparator$LowerCI95.0limit, 
-                                  'Lower', 
-                                    ifelse(comparator$UpperCI95.0limit < LowerCI95.0limit,
-                                          'Higher', 
-                                            'Similar')))
+                                'Lower', 
+                                ifelse(comparator$UpperCI95.0limit < LowerCI95.0limit,
+                                       'Higher', 
+                                       'Similar')),
+           rank = dense_rank(desc(Value))) %>%
+    mutate_if(is.numeric, ~round(., 2))
+  
+  if (add_comparator == T){
+    comparator = comparator %>%
+      select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
+             LowerCI95.0limit, UpperCI95.0limit)
+    
+    df_rank = bind_rows(list(df_rank, comparator))
+  }
   
   return(df_rank)
 }
 
 plot_bars = function(df, area_codes, data_path = './data/'){
   # Plots latest data as bar chart, with error bars
-
+  
   latest_time = tail(df$Timeperiod, 1)
   df_bar = df %>%
     filter(AreaCode %in% area_codes & Timeperiod == latest_time)
@@ -135,7 +146,7 @@ plot_trend = function(df, areas, data_path = './data/'){
     
     return(p)
   }
-
+  
 }
 
 plot_tiefighters = function(df, area_codes, data_path = './data/'){
