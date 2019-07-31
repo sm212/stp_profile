@@ -1,0 +1,1 @@
+IndicatorID,IndicatorName,ParentCode,ParentName,AreaCode,AreaName,AreaType,Sex,Age,CategoryType,Category,Timeperiod,Value,LowerCI95.0limit,UpperCI95.0limit,LowerCI99.8limit,UpperCI99.8limit,Count,Denominator,Valuenote,RecentTrend,ComparedtoEnglandvalueorpercentiles,ComparedtoRegionvalueorpercentiles,TimeperiodSortable,Newdata,Comparedtogoal
