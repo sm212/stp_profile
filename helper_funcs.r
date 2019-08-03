@@ -1,10 +1,10 @@
 library(tidyverse)
-library(fingertipsR)
 library(RColorBrewer)
 
 # Specify which columns to read in from .csv's
 col_spec = cols(
   .default = col_skip(),
+  IndicatorID = col_integer(),
   IndicatorName = col_character(),
   AreaCode = col_character(),
   AreaName = col_character(),
@@ -30,9 +30,6 @@ geog_lookup = list('101' = c('E06000033', 'E06000034', 'E07000066',
                    '165' = c('E38000007', 'E38000030', 'E38000106', 
                              'E38000168', 'E38000185'))
 
-# Colours
-sig = rev(brewer.pal(3, 'Accent'))
-
 get_data = function(indicator_id, geog_type, data_path = './data/'){
   # Get indicator data at a specified geographic level.
   #
@@ -43,10 +40,7 @@ get_data = function(indicator_id, geog_type, data_path = './data/'){
   
   file_name = paste0(data_path, indicator_id, '_', geog_type, '.csv')
   
-  if (file.exists(file_name)){
-    cat('File already exisits in', data_path, '\n')
-  }
-  else{
+  if (!file.exists(file_name)){
     df = fingertips_data(IndicatorID = indicator_id,
                          AreaTypeID = geog_type)
     
@@ -59,112 +53,149 @@ load_data = function(indicator_id, geog_type, data_path = './data/'){
   
   file_name = paste0(data_path, indicator_id, '_', geog_type, '.csv')
   if (file.exists(file_name)){
-    df = read_csv(file_name, col_types = col_spec)  
+    df = read_csv(file_name, col_types = col_spec)
   }
   else{
     df = read_csv('./data/empty.csv', col_types = col_spec)
   }
   
+  df = df %>%
+    rename(Lower = LowerCI95.0limit, Upper = UpperCI95.0limit) %>%
+    mutate(AreaName = str_replace(AreaName, 'NHS ', ''),
+           AreaName = str_replace(AreaName, ' CCG', ''))
+  
   return(df)
 }
 
-rank_areas = function(df, area_codes, time, comparator = 'England',
-                      add_comparator = F, data_path = './data/'){
-  # Ranks areas by value, compares areas by looking at confidence
-  # interval overlap compared to `comparator`
+plot_bar = function(df, areas){
   
-  if (comparator != 'England' | comparator != 'Essex') {
-    stop('Allowed values for comparator are "England" or "Essex".')
+  cat('plot_bar for', head(df$IndicatorName, 1), '\n')
+  
+  # Try to get Essex level data - may be empty if data not at County level
+  indicator_id = head(df$IndicatorID, 1)
+  df_essex = load_data(indicator_id, 102)
+  
+  # Get earliest & latest common times from each df
+  time_start = max(head(df$TimeperiodSortable, 1), 
+                   head(df_essex$TimeperiodSortable, 1))
+  time_end = min(tail(df$TimeperiodSortable, 1), 
+                 tail(df_essex$TimeperiodSortable, 1))
+  
+  # Get age & sex from df - need to make sure that Essex data is at the same
+  # age & sex as the main data
+  age = head(df$Age, 1)
+  sex = head(df$Sex, 1)
+  
+  # Filter & append
+  df_filtered = df %>%
+    filter(AreaCode %in% areas & (TimeperiodSortable == time_start | 
+                                    TimeperiodSortable == time_end))
+  
+  df_england = df %>%
+    filter(AreaName == 'England' & (TimeperiodSortable == time_start | 
+                                      TimeperiodSortable == time_end))
+  
+  df_essex = df_essex %>%
+    filter(AreaName == 'Essex' & 
+           (TimeperiodSortable == time_start | TimeperiodSortable == time_end) &
+           Age == age &
+           Sex == sex)
+  
+  df_plot = bind_rows(list(df_filtered, df_england, df_essex)) %>%
+    mutate(AreaName = fct_relevel(AreaName, 'England', after = Inf))
+  
+  # Reorder factors so Essex & England bars are at the end
+  if (nrow(df_essex) > 0 & length(levels(df_plot$AreaName)) > 2){
+    df_plot = df_plot %>%
+      mutate(AreaName = fct_relevel(AreaName, 'Essex', 
+                                    after = length(levels(df_plot$AreaName)) - 2))
   }
   
-  # Get comparator - default is England
-  df_comp = df %>%
-    filter(AreaCode == 'E92000001' & Timeperiod == time)
-
-  if (comparator == 'Essex'){
-    # Try to get Essex level data for specified `time`
-    indicator_id = head(df$IndicatorID, 1)
-    df_essex = load_data(indicator_id, 102) 
-    df_essex = df_essex %>%
-      filter(AreaCode == 'E10000012' & Timeperiod == time)
-    
-    if (nrow(df_essex) == 0){
-      message('Essex level data not available - defaulting to England')
-    }
-    else{
-      df_comp = df_essex
-    }
-  }
-
-  # Compute ranks
-  df_rank = df %>%
-    filter(AreaCode %in% area_codes & Timeperiod == time) %>%
-    group_by(Sex, Age) %>%
-    arrange(desc(Value)) %>%
-    select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
-           LowerCI95.0limit, UpperCI95.0limit) %>%
-    mutate(diff_vs_eng = ifelse(UpperCI95.0limit < df_comp$LowerCI95.0limit, 
-                                'Lower', 
-                                ifelse(df_comp$UpperCI95.0limit < LowerCI95.0limit,
-                                       'Higher', 
-                                       'Further tests needed')),
-           rank = dense_rank(desc(Value))) %>%
-    mutate_if(is.numeric, ~round(., 2))
-  
-  if (add_comparator == T){
-    df_comp = df_comp %>%
-      select(IndicatorName, AreaName, Timeperiod, Sex, Age, Value, 
-             LowerCI95.0limit, UpperCI95.0limit)
-    
-    df_rank = bind_rows(list(df_rank, df_comp))
+  # Plot
+  if(nrow(df_plot) == 0){
+    return()
   }
   
-  return(df_rank)
+  p = df_plot %>%
+    ggplot(aes(x = AreaName, y = Value, 
+               fill = as.factor(TimeperiodSortable / 10000))) +
+    geom_bar(colour = 'black', position = 'dodge', stat = 'identity') +
+    geom_errorbar(aes(ymin = Lower, ymax = Upper),
+                  position = position_dodge(width = 0.9), width = 0.5) +
+    scale_fill_brewer() +
+    theme_light() +
+    theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1),
+          panel.grid.major.x = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          legend.title = element_blank()) +
+    labs(x = NULL, y = NULL,
+         title = df_plot$IndicatorName[[1]],
+         subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]]))
+  
+  return(p)
 }
 
-plot_bars = function(df, area_codes, time, data_path = './data/'){
-  # Plots latest data as bar chart, with error bars
+rank_areas = function(df, areas, time_period=NULL){
   
-  df_bar = df %>%
-    filter(AreaCode %in% area_codes & Timeperiod == time)
-  df_comparator = df %>%
-    filter(AreaCode == 'E92000001' & Timeperiod == time)
+  cat('rank_areas for ', head(df$IndicatorName, 1), '\n')
   
-  if (nrow(df_bar) > 0){
-    bar_plot = ggplot(df_bar, aes(x = AreaName, y = Value)) +
-      geom_bar(position = 'dodge', stat = 'identity', fill = 'deepskyblue4') +
-      geom_errorbar(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit),
-                    width = 0.2) +
-      geom_hline(data = df_comparator, mapping = aes(yintercept = Value,
-                                                     linetype = 'England')) +
-      theme_light() 
-    
-    # Try to add in Essex line as well
-    indicator_id = head(df$IndicatorID, 1)
-    df_essex = load_data(indicator_id, 102) 
-    df_essex = df_essex %>%
-      filter(AreaCode == 'E10000012' & Timeperiod == time)
-  
-    if (nrow(df_essex) > 0){
-      bar_plot = bar_plot + 
-        geom_hline(data = df_essex, mapping = aes(yintercept = Value,
-                                                  linetype = 'Essex'))
-    }
-    
-    # Edit theme
-    bar_plot = bar_plot +
-      scale_colour_manual(name = '', values = c('England' = 'solid',
-                                                'Essex' = 'dashed')) +
-      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1),
-            panel.grid.major.x = element_blank(),
-            panel.grid.minor.y = element_blank(),
-            legend.title = element_blank()) +
-      labs(x = NULL, y = NULL,
-           title = df_bar$IndicatorName[[1]],
-           subtitle = paste(time, df_bar$Sex[[1]], df_bar$Age[[1]]))
-    
-    return(bar_plot)
+  if (nrow(df) == 0){
+    return()
   }
+  
+  
+  # Check if time_period provided
+  if (is.null(time_period)){
+    # Set to latest Timeperiod in data
+    time_period = tail(df$TimeperiodSortable, 1)
+  }
+  
+  # Try to get Essex level data - may be empty if data not at County level
+  indicator_id = head(df$IndicatorID, 1)
+  df_essex = load_data(indicator_id, 102)
+  
+  # Get relevant dataframes
+  df_filtered = df %>%
+    filter(AreaCode %in% areas & TimeperiodSortable == time_period)
+  
+  df_england = df %>%
+    filter(AreaName == 'England' & TimeperiodSortable == time_period)
+  
+  df_essex = df_essex %>%
+    filter(AreaName == 'Essex' & TimeperiodSortable == time_period)
+  
+  df_rank = df_filtered %>%
+    mutate(rank = dense_rank(desc(Value)),
+           vs_eng = ifelse(df_filtered$Upper < df_england$Lower, 'lower',
+                           ifelse(df_england$Upper < df_filtered$Lower, 'higher', 
+                                  'further tests needed'))) %>%
+    arrange(desc(Value))
+  
+  
+  # Add in essex comparison column if possible
+  if (nrow(df_essex) > 0){
+    df_rank = df_rank %>%
+      mutate(vs_ess = ifelse(df_filtered$Upper < df_essex$Lower, 'lower',
+                             ifelse(df_essex$Upper < df_filtered$Lower, 'higher', 
+                                    'further tests needed')))
+    
+    # Add in comparator rows & round all numbers to 2dp
+    df_out = bind_rows(list(df_rank, df_england, df_essex)) %>%
+      select(IndicatorName, AreaName, Sex, Age, Timeperiod, 
+             Value, rank, vs_eng, vs_ess) %>%
+      mutate_if(is.numeric, ~round(., 2))
+  }
+  else(
+    # Add in comparator rows & round all numbers to 2dp
+    df_out = bind_rows(list(df_rank, df_england, df_essex)) %>%
+      select(IndicatorName, AreaName, Sex, Age, Timeperiod, 
+             Value, rank, vs_eng) %>%
+      mutate_if(is.numeric, ~round(., 2))
+  )
+  
+  
+  
+  return(df_out)
 }
 
 plot_trend = function(df, areas, data_path = './data/'){
@@ -179,7 +210,9 @@ plot_trend = function(df, areas, data_path = './data/'){
       geom_point() +
       geom_line() +
       theme_light() +
-      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1)) +
+      theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 1),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank()) +
       labs(x = NULL, y = NULL,
            title = df_plot$IndicatorName[[1]],
            subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]])) +
