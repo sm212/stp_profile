@@ -168,7 +168,7 @@ rank_areas = function(df, areas, time_period=NULL){
     mutate(rank = dense_rank(desc(Value)),
            vs_eng = ifelse(df_filtered$Upper < df_england$Lower, 'lower',
                            ifelse(df_england$Upper < df_filtered$Lower, 'higher', 
-                                  'further tests needed'))) %>%
+                                  'similar'))) %>%
     arrange(desc(Value))
   
   
@@ -177,7 +177,7 @@ rank_areas = function(df, areas, time_period=NULL){
     df_rank = df_rank %>%
       mutate(vs_ess = ifelse(df_filtered$Upper < df_essex$Lower, 'lower',
                              ifelse(df_essex$Upper < df_filtered$Lower, 'higher', 
-                                    'further tests needed')))
+                                    'similar')))
     
     # Add in comparator rows & round all numbers to 2dp
     df_out = bind_rows(list(df_rank, df_england, df_essex)) %>%
