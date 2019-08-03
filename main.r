@@ -1,6 +1,7 @@
 source('./helper_funcs.r')
 
 indicator_list = read_csv('./indicator_list.csv')
+data_dump = './data/all_data.csv'
 
 for (i in 1:nrow(indicator_list)){
   id = indicator_list$id[[i]]
@@ -29,7 +30,7 @@ for (i in 1:nrow(indicator_list)){
       df_filtered = df %>%
         filter(Sex == sex & Age == age)
       
-      bar = plot_bar(df_filtered, area_codes)
+      bar = plot_bar(df_filtered, area_codes, data_dump)
       point = plot_tiefighters(df_filtered, area_codes)
       
       ranks = rank_areas(df_filtered, area_codes)
@@ -40,7 +41,7 @@ for (i in 1:nrow(indicator_list)){
       worst = ranks %>%
         filter(rank == min(rank, na.rm = T)) %>%
         select(AreaName)
-      trend = plot_trend(df_filtered, c(best, worst, 'England'))
+      trend = plot_trend(df_filtered, c(best, worst, 'England'), data_dump)
       
       # Write out
       if (!dir.exists('./out/')) {

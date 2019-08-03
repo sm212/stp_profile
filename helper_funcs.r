@@ -67,7 +67,7 @@ load_data = function(indicator_id, geog_type, data_path = './data/'){
   return(df)
 }
 
-plot_bar = function(df, areas){
+plot_bar = function(df, areas, data_dump = NULL){
   
   cat('plot_bar for', head(df$IndicatorName, 1), '\n')
   
@@ -114,6 +114,12 @@ plot_bar = function(df, areas){
   # Plot
   if(nrow(df_plot) == 0){
     return()
+  }
+  
+  if (!is.null(data_dump)){
+    df_plot %>%
+      mutate(plot_type = 'bar') %>%
+    write.table(data_dump, row.names = F, append = T, sep = ',')
   }
   
   p = df_plot %>%
@@ -198,13 +204,20 @@ rank_areas = function(df, areas, time_period=NULL){
   return(df_out)
 }
 
-plot_trend = function(df, areas, data_path = './data/'){
+plot_trend = function(df, areas, data_dump = NULL){
   # Plots all historic data for the areas specified
   
   df_plot = df %>%
     filter(AreaName %in% areas)
   
   if (nrow(df_plot) > 0){
+    
+    if (!is.null(data_dump)){
+      df_plot %>%
+        mutate(plot_type = 'trend') %>%
+      write.table(data_dump, row.names = F, append = T, sep = ',')
+    }
+    
     p = ggplot(df_plot, aes(x = Timeperiod, y = Value, 
                             colour = AreaName, group = AreaName)) +
       geom_point() +
@@ -236,7 +249,7 @@ plot_tiefighters = function(df, area_codes, data_path = './data/'){
     plot = df_plot %>%
       mutate(AreaName = fct_reorder(AreaName, Value)) %>%
       ggplot(aes(x = AreaName, y = Value)) +
-      geom_ribbon(aes(ymin = LowerCI95.0limit, ymax = UpperCI95.0limit), 
+      geom_ribbon(aes(ymin = Lower, ymax = Upper), 
                   colour = 'grey80', size = 2.5, alpha = 0.75) +
       geom_hline(aes(yintercept = Value), comparator, 
                  colour = 'grey50', size = 1) +
