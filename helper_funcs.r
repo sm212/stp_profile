@@ -119,7 +119,7 @@ plot_bar = function(df, areas, data_dump = NULL){
   if (!is.null(data_dump)){
     df_plot %>%
       mutate(plot_type = 'bar') %>%
-    write.table(data_dump, row.names = F, append = T, sep = ',')
+    write.table(data_dump, row.names = F, append = T, sep = ',', col.names = F)
   }
   
   p = df_plot %>%
@@ -215,7 +215,7 @@ plot_trend = function(df, areas, data_dump = NULL){
     if (!is.null(data_dump)){
       df_plot %>%
         mutate(plot_type = 'trend') %>%
-      write.table(data_dump, row.names = F, append = T, sep = ',')
+      write.table(data_dump, row.names = F, append = T, sep = ',', col.names = F)
     }
     
     p = ggplot(df_plot, aes(x = Timeperiod, y = Value, 
