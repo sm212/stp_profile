@@ -1,6 +1,9 @@
 library(tidyverse)
 library(RColorBrewer)
 
+# Colours
+sig = brewer.pal(4, 'Accent')
+
 # Specify which columns to read in from .csv's
 col_spec = cols(
   .default = col_skip(),
@@ -230,6 +233,17 @@ plot_trend = function(df, areas, data_dump = NULL){
            title = df_plot$IndicatorName[[1]],
            subtitle = paste(df_plot$Sex[[1]], df_plot$Age[[1]])) +
       scale_colour_manual(values = sig)
+    
+    # Try to add Essex to plot
+    indicator_id = df$IndicatorID[[1]]
+    df_essex = load_data(indicator_id, 102)
+    df_essex = df_essex %>%
+      filter(AreaName == 'Essex')
+    if (nrow(df_essex) > 0){
+      p = p + 
+        geom_point(data = df_essex) +
+        geom_line(data = df_essex)
+    }
     
     return(p)
   }

@@ -6,6 +6,7 @@ data_dump = './data/all_data.csv'
 for (i in 1:nrow(indicator_list)){
   id = indicator_list$id[[i]]
   geog_id = indicator_list$geog_id[[i]]
+  indicator_name = indicator_list$fname[[i]]
   
   # Download data
   if (!dir.exists('./data/')){
@@ -50,14 +51,14 @@ for (i in 1:nrow(indicator_list)){
       
       file_suffix = paste0('_', sex, '_', age)
       file_suffix = str_replace(file_suffix, '[><]', '')
-      width = 17
-      height = 12
+      width = 25
+      height = 25
       
-      ggsave(paste0('./out/bar', id, '_', geog_id, file_suffix, '.png'), 
+      ggsave(paste0('./out/bar ', indicator_name, file_suffix, '.png'), 
              bar, width = width, height = height, units = 'cm')
-      ggsave(paste0('./out/trend', id, '_', geog_id, file_suffix, '.png'), 
+      ggsave(paste0('./out/trend ', indicator_name, file_suffix, '.png'), 
              trend, width = width, height = height, units = 'cm')
-      write_csv(ranks, paste0('./out/rank', id, '_', geog_id, file_suffix, '.csv'))
+      write_csv(ranks, paste0('./out/', indicator_name, file_suffix, '.csv'))
     }
   }
 }
